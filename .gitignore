@@ -1,0 +1,5 @@
+__pycache__
+*.db
+node_modules
+test-results
+playwright-report

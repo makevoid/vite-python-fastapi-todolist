@@ -1,0 +1,6 @@
+[tool.pytest.ini_options]
+addopts = "--browser chromium --base-url=http://localhost:5174"
+testpaths = ["."]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
