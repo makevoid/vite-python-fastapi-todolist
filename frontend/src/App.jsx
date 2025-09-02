@@ -302,6 +302,13 @@ function App() {
                               size="md"
                               borderRadius="md"
                               fontWeight="600"
+                              bg="white"
+                              border="2px"
+                              borderColor="blue.200"
+                              color="gray.800"
+                              focusBorderColor="blue.500"
+                              _hover={{ borderColor: "blue.300" }}
+                              _placeholder={{ color: "gray.400" }}
                             />
                             <Textarea
                               value={editDescription}
@@ -310,6 +317,13 @@ function App() {
                               size="md"
                               borderRadius="md"
                               rows={3}
+                              bg="white"
+                              border="2px"
+                              borderColor="blue.200"
+                              color="gray.800"
+                              focusBorderColor="blue.500"
+                              _hover={{ borderColor: "blue.300" }}
+                              _placeholder={{ color: "gray.400" }}
                             />
                             <HStack spacing={2}>
                               <Button
@@ -345,6 +359,19 @@ function App() {
                                 colorScheme="green"
                                 mt={1}
                                 isDisabled={isToggling}
+                                borderColor="gray.400"
+                                _hover={{
+                                  borderColor: "green.400"
+                                }}
+                                _checked={{
+                                  bg: "green.500",
+                                  borderColor: "green.500",
+                                  color: "white",
+                                  _hover: {
+                                    bg: "green.600",
+                                    borderColor: "green.600"
+                                  }
+                                }}
                               />
                               <Box flex={1}>
                                 <Text
