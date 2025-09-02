@@ -9,18 +9,18 @@ import os
 import tempfile
 
 # Create test database in temp directory
-test_db_file = os.path.join(tempfile.gettempdir(), "test_counter.db")
+test_db_file = os.path.join(tempfile.gettempdir(), "test_todo.db")
 test_db = SqliteDatabase(test_db_file)
 
 # Import and configure models for test database
-from models import Counter
-Counter._meta.database = test_db
+from models import Todo
+Todo._meta.database = test_db
 
 # Import other modules
-from controllers import CounterController
-from schemas import CounterCreate, CounterResponse, CounterUpdate, IncrementRequest
+from controllers import TodoController
+from schemas import TodoCreate, TodoResponse, TodoUpdate
 
-app = FastAPI(title="Counter API - Test", version="1.0.0")
+app = FastAPI(title="Todo API - Test", version="1.0.0")
 
 # Configure CORS for test
 app.add_middleware(
@@ -35,48 +35,40 @@ app.add_middleware(
 def init_test_db():
     if test_db.is_closed():
         test_db.connect()
-    test_db.create_tables([Counter], safe=True)
+    test_db.create_tables([Todo], safe=True)
 
 # Initialize controller
-controller = CounterController()
+controller = TodoController()
 
 # Root endpoint
 @app.get("/")
 async def read_root():
-    return {"message": "Counter API - Test", "version": "1.0.0"}
+    return {"message": "Todo API - Test", "version": "1.0.0"}
 
-# Counter endpoints
-@app.get("/api/counters", response_model=list[CounterResponse])
-async def get_counters():
-    return controller.get_all_counters()
+# Todo endpoints
+@app.get("/api/todos", response_model=list[TodoResponse])
+async def get_todos():
+    return controller.get_all_todos()
 
-@app.post("/api/counters", response_model=CounterResponse)
-async def create_counter(counter: CounterCreate):
-    return controller.create_counter(counter)
+@app.post("/api/todos", response_model=TodoResponse)
+async def create_todo(todo: TodoCreate):
+    return controller.create_todo(todo)
 
-@app.get("/api/counters/{name}", response_model=CounterResponse)
-async def get_counter(name: str):
-    return controller.get_counter(name)
+@app.get("/api/todos/{todo_id}", response_model=TodoResponse)
+async def get_todo(todo_id: int):
+    return controller.get_todo(todo_id)
 
-@app.put("/api/counters/{name}", response_model=CounterResponse)
-async def update_counter(name: str, counter_update: CounterUpdate):
-    return controller.update_counter(name, counter_update)
+@app.put("/api/todos/{todo_id}", response_model=TodoResponse)
+async def update_todo(todo_id: int, todo_update: TodoUpdate):
+    return controller.update_todo(todo_id, todo_update)
 
-@app.delete("/api/counters/{name}")
-async def delete_counter(name: str):
-    return controller.delete_counter(name)
+@app.post("/api/todos/{todo_id}/toggle", response_model=TodoResponse)
+async def toggle_todo_completion(todo_id: int):
+    return controller.toggle_todo_completion(todo_id)
 
-@app.post("/api/counters/{name}/increment", response_model=CounterResponse)
-async def increment_counter(name: str, request: IncrementRequest = IncrementRequest()):
-    return controller.increment_counter(name, request)
-
-@app.post("/api/counters/{name}/decrement", response_model=CounterResponse)
-async def decrement_counter(name: str, request: IncrementRequest = IncrementRequest()):
-    return controller.decrement_counter(name, request)
-
-@app.post("/api/counters/{name}/reset", response_model=CounterResponse)
-async def reset_counter(name: str):
-    return controller.reset_counter(name)
+@app.delete("/api/todos/{todo_id}")
+async def delete_todo(todo_id: int):
+    return controller.delete_todo(todo_id)
 
 # Startup event
 @app.on_event("startup")
