@@ -1,52 +1,42 @@
 from typing import List
-from schemas import CounterResponse, CounterCreate, CounterUpdate, IncrementRequest
-from services import CounterService
+from schemas import TodoResponse, TodoCreate, TodoUpdate
+from services import TodoService
 
-class CounterRepository:
-    """Repository pattern for counter data access"""
+class TodoRepository:
+    """Repository pattern for todo data access"""
 
     def __init__(self):
-        self.service = CounterService()
+        self.service = TodoService()
 
-    def find_all(self) -> List[CounterResponse]:
-        """Find all counters and return as response models"""
-        counters = self.service.get_all_counters()
-        return [CounterResponse.model_validate(c, from_attributes=True) for c in counters]
+    def find_all(self) -> List[TodoResponse]:
+        """Find all todos and return as response models"""
+        todos = self.service.get_all_todos()
+        return [TodoResponse.model_validate(t, from_attributes=True) for t in todos]
 
-    def find_by_name(self, name: str) -> CounterResponse:
-        """Find counter by name and return as response model"""
-        counter = self.service.get_counter_by_name(name)
-        return CounterResponse.model_validate(counter, from_attributes=True)
+    def find_by_id(self, todo_id: int) -> TodoResponse:
+        """Find todo by ID and return as response model"""
+        todo = self.service.get_todo_by_id(todo_id)
+        return TodoResponse.model_validate(todo, from_attributes=True)
 
-    def create(self, counter_data: CounterCreate) -> CounterResponse:
-        """Create a new counter from request data"""
-        counter = self.service.create_counter(
-            name=counter_data.name,
-            initial_value=counter_data.initial_value
+    def create(self, todo_data: TodoCreate) -> TodoResponse:
+        """Create a new todo from request data"""
+        todo = self.service.create_todo(
+            title=todo_data.title,
+            description=todo_data.description
         )
-        return CounterResponse.model_validate(counter, from_attributes=True)
+        return TodoResponse.model_validate(todo, from_attributes=True)
 
-    def increment(self, name: str, request: IncrementRequest) -> CounterResponse:
-        """Increment counter and return response model"""
-        counter = self.service.increment_counter(name, request.amount)
-        return CounterResponse.model_validate(counter, from_attributes=True)
+    def update(self, todo_id: int, update_data: TodoUpdate) -> TodoResponse:
+        """Update todo and return response model"""
+        todo = self.service.update_todo(todo_id, update_data)
+        return TodoResponse.model_validate(todo, from_attributes=True)
 
-    def decrement(self, name: str, request: IncrementRequest) -> CounterResponse:
-        """Decrement counter and return response model"""
-        counter = self.service.decrement_counter(name, request.amount)
-        return CounterResponse.model_validate(counter, from_attributes=True)
+    def toggle_completion(self, todo_id: int) -> TodoResponse:
+        """Toggle todo completion and return response model"""
+        todo = self.service.toggle_todo_completion(todo_id)
+        return TodoResponse.model_validate(todo, from_attributes=True)
 
-    def reset(self, name: str) -> CounterResponse:
-        """Reset counter and return response model"""
-        counter = self.service.reset_counter(name)
-        return CounterResponse.model_validate(counter, from_attributes=True)
-
-    def update(self, name: str, update_data: CounterUpdate) -> CounterResponse:
-        """Update counter and return response model"""
-        counter = self.service.update_counter(name, update_data.value)
-        return CounterResponse.model_validate(counter, from_attributes=True)
-
-    def delete(self, name: str) -> dict:
-        """Delete counter and return success message"""
-        self.service.delete_counter(name)
-        return {"message": f"Counter '{name}' deleted"}
+    def delete(self, todo_id: int) -> dict:
+        """Delete todo and return success message"""
+        self.service.delete_todo(todo_id)
+        return {"message": f"Todo with id '{todo_id}' deleted"}

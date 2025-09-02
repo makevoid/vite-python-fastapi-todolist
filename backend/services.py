@@ -1,76 +1,59 @@
 from typing import List
-from peewee import IntegrityError
-from models import Counter
+from models import Todo
+from schemas import TodoUpdate
 
-class CounterNotFoundException(Exception):
-    """Raised when a counter is not found"""
+class TodoNotFoundException(Exception):
+    """Raised when a todo is not found"""
     pass
 
 
-class CounterAlreadyExistsException(Exception):
-    """Raised when trying to create a counter that already exists"""
-    pass
-
-
-class CounterService:
-    """Service class for counter business logic"""
+class TodoService:
+    """Service class for todo business logic"""
 
     @staticmethod
-    def get_all_counters() -> List[Counter]:
-        """Get all counters from the database"""
-        return list(Counter.select())
+    def get_all_todos() -> List[Todo]:
+        """Get all todos from the database"""
+        return list(Todo.select())
 
     @staticmethod
-    def get_counter_by_name(name: str) -> Counter:
-        """Get a specific counter by name"""
+    def get_todo_by_id(todo_id: int) -> Todo:
+        """Get a specific todo by ID"""
         try:
-            return Counter.get(Counter.name == name)
-        except Counter.DoesNotExist:
-            raise CounterNotFoundException(f"Counter '{name}' not found")
+            return Todo.get(Todo.id == todo_id)
+        except Todo.DoesNotExist:
+            raise TodoNotFoundException(f"Todo with id '{todo_id}' not found")
 
     @staticmethod
-    def create_counter(name: str, initial_value: int = 0) -> Counter:
-        """Create a new counter"""
-        try:
-            return Counter.create(name=name, value=initial_value)
-        except IntegrityError:
-            raise CounterAlreadyExistsException(f"Counter '{name}' already exists")
+    def create_todo(title: str, description: str = '') -> Todo:
+        """Create a new todo"""
+        return Todo.create(title=title, description=description)
 
     @staticmethod
-    def increment_counter(name: str, amount: int = 1) -> Counter:
-        """Increment a counter by the specified amount"""
-        counter = CounterService.get_counter_by_name(name)
-        counter.value += amount
-        counter.save()
-        return counter
+    def update_todo(todo_id: int, update_data: TodoUpdate) -> Todo:
+        """Update a todo's details"""
+        todo = TodoService.get_todo_by_id(todo_id)
+        
+        if update_data.title is not None:
+            todo.title = update_data.title
+        if update_data.description is not None:
+            todo.description = update_data.description
+        if update_data.completed is not None:
+            todo.completed = update_data.completed
+        
+        todo.save()
+        return todo
 
     @staticmethod
-    def decrement_counter(name: str, amount: int = 1) -> Counter:
-        """Decrement a counter by the specified amount"""
-        counter = CounterService.get_counter_by_name(name)
-        counter.value -= amount
-        counter.save()
-        return counter
+    def toggle_todo_completion(todo_id: int) -> Todo:
+        """Toggle a todo's completion status"""
+        todo = TodoService.get_todo_by_id(todo_id)
+        todo.completed = not todo.completed
+        todo.save()
+        return todo
 
     @staticmethod
-    def reset_counter(name: str) -> Counter:
-        """Reset a counter to 0"""
-        counter = CounterService.get_counter_by_name(name)
-        counter.value = 0
-        counter.save()
-        return counter
-
-    @staticmethod
-    def update_counter(name: str, value: int) -> Counter:
-        """Update a counter's value directly"""
-        counter = CounterService.get_counter_by_name(name)
-        counter.value = value
-        counter.save()
-        return counter
-
-    @staticmethod
-    def delete_counter(name: str) -> bool:
-        """Delete a counter"""
-        counter = CounterService.get_counter_by_name(name)
-        counter.delete_instance()
+    def delete_todo(todo_id: int) -> bool:
+        """Delete a todo"""
+        todo = TodoService.get_todo_by_id(todo_id)
+        todo.delete_instance()
         return True

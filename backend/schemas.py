@@ -1,20 +1,20 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class CounterResponse(BaseModel):
+class TodoResponse(BaseModel):
     id: int
-    name: str
-    value: int
+    title: str
+    description: str
+    completed: bool
 
     class Config:
         from_attributes = True
 
-class CounterCreate(BaseModel):
-    name: str
-    initial_value: Optional[int] = 0
+class TodoCreate(BaseModel):
+    title: str
+    description: Optional[str] = ''
 
-class CounterUpdate(BaseModel):
-    value: int
-
-class IncrementRequest(BaseModel):
-    amount: Optional[int] = 1
+class TodoUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    completed: Optional[bool] = None

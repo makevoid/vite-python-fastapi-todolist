@@ -1,66 +1,49 @@
 from fastapi import HTTPException
 from typing import List
 
-from schemas import CounterResponse, CounterCreate, CounterUpdate, IncrementRequest
-from repositories import CounterRepository
-from services import CounterNotFoundException, CounterAlreadyExistsException
+from schemas import TodoResponse, TodoCreate, TodoUpdate
+from repositories import TodoRepository
+from services import TodoNotFoundException
 
 
-class CounterController:
-    """Controller class for counter API endpoints"""
+class TodoController:
+    """Controller class for todo API endpoints"""
 
     def __init__(self):
-        self.repository = CounterRepository()
+        self.repository = TodoRepository()
 
-    def get_all_counters(self) -> List[CounterResponse]:
-        """Get all counters"""
+    def get_all_todos(self) -> List[TodoResponse]:
+        """Get all todos"""
         return self.repository.find_all()
 
-    def get_counter(self, counter_name: str) -> CounterResponse:
-        """Get a specific counter by name"""
+    def get_todo(self, todo_id: int) -> TodoResponse:
+        """Get a specific todo by ID"""
         try:
-            return self.repository.find_by_name(counter_name)
-        except CounterNotFoundException as e:
+            return self.repository.find_by_id(todo_id)
+        except TodoNotFoundException as e:
             raise HTTPException(status_code=404, detail=str(e))
 
-    def create_counter(self, counter: CounterCreate) -> CounterResponse:
-        """Create a new counter"""
-        try:
-            return self.repository.create(counter)
-        except CounterAlreadyExistsException as e:
-            raise HTTPException(status_code=400, detail=str(e))
+    def create_todo(self, todo: TodoCreate) -> TodoResponse:
+        """Create a new todo"""
+        return self.repository.create(todo)
 
-    def increment_counter(self, counter_name: str, request: IncrementRequest) -> CounterResponse:
-        """Increment a counter by a specified amount"""
+    def update_todo(self, todo_id: int, update: TodoUpdate) -> TodoResponse:
+        """Update a todo's details"""
         try:
-            return self.repository.increment(counter_name, request)
-        except CounterNotFoundException as e:
+            return self.repository.update(todo_id, update)
+        except TodoNotFoundException as e:
             raise HTTPException(status_code=404, detail=str(e))
 
-    def decrement_counter(self, counter_name: str, request: IncrementRequest) -> CounterResponse:
-        """Decrement a counter by a specified amount"""
+    def toggle_todo_completion(self, todo_id: int) -> TodoResponse:
+        """Toggle a todo's completion status"""
         try:
-            return self.repository.decrement(counter_name, request)
-        except CounterNotFoundException as e:
+            return self.repository.toggle_completion(todo_id)
+        except TodoNotFoundException as e:
             raise HTTPException(status_code=404, detail=str(e))
 
-    def reset_counter(self, counter_name: str) -> CounterResponse:
-        """Reset a counter to 0"""
+    def delete_todo(self, todo_id: int) -> dict:
+        """Delete a todo"""
         try:
-            return self.repository.reset(counter_name)
-        except CounterNotFoundException as e:
-            raise HTTPException(status_code=404, detail=str(e))
-
-    def update_counter(self, counter_name: str, update: CounterUpdate) -> CounterResponse:
-        """Update a counter's value directly"""
-        try:
-            return self.repository.update(counter_name, update)
-        except CounterNotFoundException as e:
-            raise HTTPException(status_code=404, detail=str(e))
-
-    def delete_counter(self, counter_name: str) -> dict:
-        """Delete a counter"""
-        try:
-            return self.repository.delete(counter_name)
-        except CounterNotFoundException as e:
+            return self.repository.delete(todo_id)
+        except TodoNotFoundException as e:
             raise HTTPException(status_code=404, detail=str(e))

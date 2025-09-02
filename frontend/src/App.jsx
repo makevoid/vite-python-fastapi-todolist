@@ -19,73 +19,92 @@ import {
   Card,
   CardBody,
   CardHeader,
+  Textarea,
+  Checkbox,
 } from "@chakra-ui/react";
-import { IoAdd, IoRemove, IoRefresh, IoTrash } from "react-icons/io5";
-import useCounters from "./hooks/useCounters.js";
+import { IoAdd, IoTrash, IoCheckmark, IoClose, IoCreate } from "react-icons/io5";
+import useTodos from "./hooks/useTodos.js";
 
 function App() {
-  const [newCounterName, setNewCounterName] = useState("");
-  const [newCounterValue, setNewCounterValue] = useState(0);
+  const [newTodoTitle, setNewTodoTitle] = useState("");
+  const [newTodoDescription, setNewTodoDescription] = useState("");
+  const [editingTodo, setEditingTodo] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
 
   const bgGradient = "linear(to-br, blue.50, gray.100, blue.100)";
   const cardBg = "white";
-  const counterBg = "gray.50";
   const primaryColor = "blue.600";
   const headerBg = "white";
   const borderColor = "gray.200";
 
-  // Use the custom hook for counter operations
+  // Use the custom hook for todo operations
   const {
-    counters,
+    todos,
     isLoading,
     error,
-    createCounter,
-    incrementCounter,
-    decrementCounter,
-    resetCounter,
-    updateCounter,
-    deleteCounter,
+    createTodo,
+    updateTodo,
+    toggleTodoCompletion,
+    deleteTodo,
     isCreating,
-    isIncrementing,
-    isDecrementing,
-    isResetting,
     isUpdating,
+    isToggling,
     isDeleting,
-  } = useCounters();
+  } = useTodos();
 
   // Event handlers
-  const handleCreateCounter = (e) => {
+  const handleCreateTodo = (e) => {
     e.preventDefault();
-    if (!newCounterName.trim()) return;
+    if (!newTodoTitle.trim()) return;
 
-    createCounter({
-      name: newCounterName,
-      initial_value: parseInt(newCounterValue) || 0,
+    createTodo({
+      title: newTodoTitle,
+      description: newTodoDescription,
     });
 
-    setNewCounterName("");
-    setNewCounterValue(0);
+    setNewTodoTitle("");
+    setNewTodoDescription("");
   };
 
-  const handleIncrement = (name, amount = 1) => {
-    incrementCounter({ name, amount });
+  const handleToggleCompletion = (id) => {
+    toggleTodoCompletion(id);
   };
 
-  const handleDecrement = (name, amount = 1) => {
-    decrementCounter({ name, amount });
+  const handleDelete = (id) => {
+    deleteTodo(id);
   };
 
-  const handleReset = (name) => {
-    resetCounter(name);
+  const handleStartEdit = (todo) => {
+    setEditingTodo(todo.id);
+    setEditTitle(todo.title);
+    setEditDescription(todo.description);
   };
 
-  const handleUpdate = (name, value) => {
-    updateCounter({ name, value });
+  const handleSaveEdit = () => {
+    if (!editTitle.trim()) return;
+
+    updateTodo({
+      id: editingTodo,
+      updates: {
+        title: editTitle,
+        description: editDescription,
+      }
+    });
+
+    setEditingTodo(null);
+    setEditTitle("");
+    setEditDescription("");
   };
 
-  const handleDelete = (name) => {
-    deleteCounter(name);
+  const handleCancelEdit = () => {
+    setEditingTodo(null);
+    setEditTitle("");
+    setEditDescription("");
   };
+
+  const completedTodos = todos.filter(todo => todo.completed);
+  const pendingTodos = todos.filter(todo => !todo.completed);
 
   if (error) {
     return (
@@ -93,7 +112,7 @@ function App() {
         <Alert status="error" borderRadius="lg" maxW="md">
           <AlertIcon />
           <Box>
-            <Text fontWeight="bold">Failed to load counters</Text>
+            <Text fontWeight="bold">Failed to load todos</Text>
             <Text>{error.message}</Text>
           </Box>
         </Alert>
@@ -109,14 +128,14 @@ function App() {
           <Flex justify="space-between" align="center">
             <VStack align="start" spacing={1}>
               <Heading as="h1" size="xl" color={primaryColor} fontWeight="600" letterSpacing="-0.5px">
-                Counter App
+                Todo List App
               </Heading>
               <Text color="gray.600" fontSize="sm" fontWeight="500">
-                Dashboard
+                Manage Your Tasks
               </Text>
             </VStack>
             <Badge colorScheme="blue" variant="outline" px={3} py={1} borderRadius="full" fontWeight="600">
-              Counter V1.0
+              Todo V1.0
             </Badge>
           </Flex>
         </Container>
@@ -124,70 +143,66 @@ function App() {
 
       <Container maxW="7xl" py={8}>
         <VStack spacing={8}>
-          {/* Create Counter Form */}
+          {/* Create Todo Form */}
           <Card w="100%" bg={cardBg} shadow="sm" border="1px" borderColor={borderColor} borderRadius="lg">
             <CardHeader bg="gray.50" borderTopRadius="lg" borderBottom="1px" borderColor={borderColor}>
               <Flex align="center" gap={3}>
                 <Box w={3} h={3} bg="blue.500" borderRadius="full" />
                 <Heading size="md" color="gray.700" fontWeight="600">
-                  Create New Counter
+                  Add New Todo
                 </Heading>
               </Flex>
             </CardHeader>
             <CardBody p={6}>
-              <form onSubmit={handleCreateCounter}>
+              <form onSubmit={handleCreateTodo}>
                 <VStack spacing={5}>
-                  <HStack w="100%" spacing={4}>
-                    <Box flex={2}>
-                      <Text fontSize="sm" fontWeight="600" color="gray.700" mb={2}>
-                        Counter Name
-                      </Text>
-                      <Input
-                        placeholder="Enter counter name..."
-                        value={newCounterName}
-                        onChange={(e) => setNewCounterName(e.target.value)}
-                        data-testid="counter-name-input"
-                        size="md"
-                        borderRadius="md"
-                        bg="white"
-                        border="2px"
-                        borderColor="gray.200"
-                        focusBorderColor="blue.500"
-                        _hover={{ borderColor: "gray.300" }}
-                        color="gray.800"
-                        _placeholder={{ color: "gray.400" }}
-                      />
-                    </Box>
-                    <Box flex={1}>
-                      <Text fontSize="sm" fontWeight="600" color="gray.700" mb={2}>
-                        Initial Value
-                      </Text>
-                      <Input
-                        type="number"
-                        value={newCounterValue}
-                        onChange={(e) => setNewCounterValue(e.target.value)}
-                        placeholder="0"
-                        data-testid="counter-value-input"
-                        size="md"
-                        borderRadius="md"
-                        bg="white"
-                        border="2px"
-                        borderColor="gray.200"
-                        min={-999999}
-                        max={999999}
-                        focusBorderColor="blue.500"
-                        _hover={{ borderColor: "gray.300" }}
-                        color="gray.800"
-                        _placeholder={{ color: "gray.400" }}
-                      />
-                    </Box>
-                  </HStack>
+                  <Box w="100%">
+                    <Text fontSize="sm" fontWeight="600" color="gray.700" mb={2}>
+                      Todo Title
+                    </Text>
+                    <Input
+                      placeholder="Enter todo title..."
+                      value={newTodoTitle}
+                      onChange={(e) => setNewTodoTitle(e.target.value)}
+                      data-testid="todo-title-input"
+                      size="md"
+                      borderRadius="md"
+                      bg="white"
+                      border="2px"
+                      borderColor="gray.200"
+                      focusBorderColor="blue.500"
+                      _hover={{ borderColor: "gray.300" }}
+                      color="gray.800"
+                      _placeholder={{ color: "gray.400" }}
+                    />
+                  </Box>
+                  <Box w="100%">
+                    <Text fontSize="sm" fontWeight="600" color="gray.700" mb={2}>
+                      Description (Optional)
+                    </Text>
+                    <Textarea
+                      placeholder="Enter todo description..."
+                      value={newTodoDescription}
+                      onChange={(e) => setNewTodoDescription(e.target.value)}
+                      data-testid="todo-description-input"
+                      size="md"
+                      borderRadius="md"
+                      bg="white"
+                      border="2px"
+                      borderColor="gray.200"
+                      focusBorderColor="blue.500"
+                      _hover={{ borderColor: "gray.300" }}
+                      color="gray.800"
+                      _placeholder={{ color: "gray.400" }}
+                      rows={3}
+                    />
+                  </Box>
                   <Button
                     type="submit"
                     colorScheme="blue"
                     size="md"
                     w="full"
-                    data-testid="create-counter-btn"
+                    data-testid="create-todo-btn"
                     borderRadius="md"
                     fontWeight="600"
                     px={8}
@@ -195,30 +210,34 @@ function App() {
                     _hover={{ transform: "translateY(-1px)", shadow: "md" }}
                     transition="all 0.2s"
                     isLoading={isCreating}
-                    loadingText="Creating Counter..."
+                    loadingText="Adding Todo..."
+                    leftIcon={<IoAdd />}
                   >
-                    Create Counter
+                    Add Todo
                   </Button>
                 </VStack>
               </form>
             </CardBody>
           </Card>
 
-          {/* Counters List */}
+          {/* Todos List */}
           <Card w="100%" bg={cardBg} shadow="sm" border="1px" borderColor={borderColor} borderRadius="lg">
             <CardHeader bg="gray.50" borderTopRadius="lg" borderBottom="1px" borderColor={borderColor}>
               <Flex justify="space-between" align="center">
                 <Flex align="center" gap={3}>
                   <Box w={3} h={3} bg="green.500" borderRadius="full" />
                   <Heading size="md" color="gray.700" fontWeight="600">
-                    Active Counters
+                    Your Todos
                   </Heading>
                 </Flex>
-                {counters.length > 0 && (
-                  <Badge colorScheme="blue" variant="solid" borderRadius="md" px={3} py={1} fontWeight="600">
-                    {counters.length} Active
+                <HStack spacing={3}>
+                  <Badge colorScheme="orange" variant="solid" borderRadius="md" px={3} py={1} fontWeight="600">
+                    {pendingTodos.length} Pending
                   </Badge>
-                )}
+                  <Badge colorScheme="green" variant="solid" borderRadius="md" px={3} py={1} fontWeight="600">
+                    {completedTodos.length} Done
+                  </Badge>
+                </HStack>
               </Flex>
             </CardHeader>
             <CardBody p={6}>
@@ -227,13 +246,13 @@ function App() {
                   <VStack spacing={4}>
                     <Spinner size="lg" color="blue.500" thickness="3px" />
                     <Text color="gray.600" fontSize="sm" fontWeight="500">
-                      Loading counters...
+                      Loading todos...
                     </Text>
                   </VStack>
                 </Flex>
               )}
 
-              {!isLoading && counters.length === 0 && (
+              {!isLoading && todos.length === 0 && (
                 <Box
                   textAlign="center"
                   p={12}
@@ -244,208 +263,138 @@ function App() {
                 >
                   <VStack spacing={4}>
                     <Box fontSize="4xl" color="gray.400">
-                      📊
+                      📝
                     </Box>
                     <VStack spacing={2}>
                       <Text color="gray.700" fontWeight="600" fontSize="lg">
-                        No counters configured
+                        No todos yet
                       </Text>
                       <Text color="gray.500" fontSize="sm">
-                        Create your first counter using the form above to get started.
+                        Add your first todo using the form above to get started.
                       </Text>
                     </VStack>
                   </VStack>
                 </Box>
               )}
 
-              {!isLoading && counters.length > 0 && (
-                <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={5}>
-                  {counters.map((counter) => (
+              {!isLoading && todos.length > 0 && (
+                <VStack spacing={4} align="stretch">
+                  {todos.map((todo) => (
                     <Card
-                      key={counter.id}
+                      key={todo.id}
                       bg="white"
                       borderRadius="lg"
                       shadow="sm"
                       _hover={{ shadow: "md", borderColor: "blue.300" }}
                       transition="all 0.2s"
-                      data-testid={`counter-${counter.name}`}
+                      data-testid={`todo-${todo.id}`}
                       border="2px"
-                      borderColor="gray.200"
+                      borderColor={todo.completed ? "green.200" : "gray.200"}
+                      opacity={todo.completed ? 0.8 : 1}
                     >
                       <CardBody p={5}>
-                        <VStack spacing={4}>
-                          <Box
-                            w="full"
-                            bg="gray.50"
-                            p={3}
-                            borderRadius="md"
-                            border="1px"
-                            borderColor="gray.200"
-                          >
-                            <Text fontSize="sm" fontWeight="600" color="gray.600" textAlign="center" mb={1}>
-                              COUNTER ID
-                            </Text>
-                            <Text
-                              fontSize="md"
-                              fontWeight="700"
-                              color="gray.800"
-                              textAlign="center"
-                              noOfLines={1}
-                            >
-                              {counter.name}
-                            </Text>
-                          </Box>
-
-                          <Box textAlign="center" py={4}>
-                            <Text fontSize="xs" fontWeight="600" color="gray.500" mb={2}>
-                              CURRENT VALUE
-                            </Text>
-                            <Text
-                              fontSize="4xl"
-                              fontWeight="800"
-                              color="blue.600"
-                              fontFamily="mono"
-                              data-testid={`value-${counter.name}`}
-                              lineHeight={1}
-                            >
-                              {counter.value}
-                            </Text>
-                          </Box>
-
-                          <Box w="full" h="1px" bg="gray.200" />
-
-                          {/* Counter Controls */}
-                          <VStack spacing={3} w="100%">
-                            <Text fontSize="xs" fontWeight="600" color="gray.500" textAlign="center">
-                              OPERATIONS
-                            </Text>
-                            <HStack spacing={2} justify="center" w="full">
+                        {editingTodo === todo.id ? (
+                          <VStack spacing={4} align="stretch">
+                            <Input
+                              value={editTitle}
+                              onChange={(e) => setEditTitle(e.target.value)}
+                              data-testid={`edit-title-${todo.id}`}
+                              size="md"
+                              borderRadius="md"
+                              fontWeight="600"
+                            />
+                            <Textarea
+                              value={editDescription}
+                              onChange={(e) => setEditDescription(e.target.value)}
+                              data-testid={`edit-description-${todo.id}`}
+                              size="md"
+                              borderRadius="md"
+                              rows={3}
+                            />
+                            <HStack spacing={2}>
                               <Button
-                                leftIcon={<IoRemove />}
-                                colorScheme="red"
-                                variant="outline"
+                                colorScheme="blue"
                                 size="sm"
-                                onClick={() => handleDecrement(counter.name, 10)}
-                                data-testid={`decrement-10-${counter.name}`}
-                                borderRadius="md"
-                                fontSize="xs"
-                                fontWeight="600"
-                                isLoading={isDecrementing}
-                                flex={1}
+                                onClick={handleSaveEdit}
+                                data-testid={`save-edit-${todo.id}`}
+                                leftIcon={<IoCheckmark />}
+                                isLoading={isUpdating}
                               >
-                                -10
+                                Save
                               </Button>
                               <Button
-                                colorScheme="red"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleDecrement(counter.name)}
-                                data-testid={`decrement-${counter.name}`}
-                                borderRadius="md"
-                                fontSize="xs"
-                                fontWeight="600"
-                                isLoading={isDecrementing}
-                                flex={1}
-                              >
-                                -1
-                              </Button>
-                              <Button
-                                leftIcon={<IoRefresh />}
                                 colorScheme="gray"
                                 variant="outline"
                                 size="sm"
-                                onClick={() => handleReset(counter.name)}
-                                data-testid={`reset-${counter.name}`}
-                                borderRadius="md"
-                                fontSize="xs"
-                                fontWeight="600"
-                                isLoading={isResetting}
-                                flex={1}
+                                onClick={handleCancelEdit}
+                                data-testid={`cancel-edit-${todo.id}`}
+                                leftIcon={<IoClose />}
                               >
-                                RST
-                              </Button>
-                              <Button
-                                colorScheme="green"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleIncrement(counter.name)}
-                                data-testid={`increment-${counter.name}`}
-                                borderRadius="md"
-                                fontSize="xs"
-                                fontWeight="600"
-                                isLoading={isIncrementing}
-                                flex={1}
-                              >
-                                +1
-                              </Button>
-                              <Button
-                                leftIcon={<IoAdd />}
-                                colorScheme="green"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleIncrement(counter.name, 10)}
-                                data-testid={`increment-10-${counter.name}`}
-                                borderRadius="md"
-                                fontSize="xs"
-                                fontWeight="600"
-                                isLoading={isIncrementing}
-                                flex={1}
-                              >
-                                +10
+                                Cancel
                               </Button>
                             </HStack>
-
-                            {/* Counter Actions */}
-                            <VStack w="100%" spacing={2}>
-                              <Text fontSize="xs" fontWeight="600" color="gray.500" textAlign="center">
-                                DIRECT SET
-                              </Text>
-                              <HStack w="100%" spacing={2}>
-                                <Input
-                                  type="number"
-                                  placeholder="Enter value"
-                                  data-testid={`set-value-${counter.name}`}
-                                  size="sm"
-                                  borderRadius="md"
-                                  flex={1}
-                                  bg="white"
-                                  border="2px"
-                                  borderColor="gray.200"
-                                  fontSize="xs"
-                                  fontWeight="600"
-                                  _hover={{ borderColor: "gray.300" }}
-                                  _focus={{ borderColor: "blue.400" }}
-                                  color="gray.800"
-                                  _placeholder={{ color: "gray.400" }}
-                                  onKeyPress={(e) => {
-                                    if (e.key === "Enter") {
-                                      handleUpdate(counter.name, e.target.value);
-                                      e.target.value = "";
-                                    }
-                                  }}
-                                />
-                                <Button
-                                  leftIcon={<IoTrash />}
-                                  colorScheme="red"
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleDelete(counter.name)}
-                                  data-testid={`delete-${counter.name}`}
-                                  borderRadius="md"
-                                  fontSize="xs"
-                                  fontWeight="600"
-                                  isLoading={isDeleting}
-                                >
-                                  DEL
-                                </Button>
-                              </HStack>
-                            </VStack>
                           </VStack>
-                        </VStack>
+                        ) : (
+                          <VStack spacing={3} align="stretch">
+                            <Flex align="flex-start" gap={3}>
+                              <Checkbox
+                                isChecked={todo.completed}
+                                onChange={() => handleToggleCompletion(todo.id)}
+                                data-testid={`toggle-${todo.id}`}
+                                size="lg"
+                                colorScheme="green"
+                                mt={1}
+                                isDisabled={isToggling}
+                              />
+                              <Box flex={1}>
+                                <Text
+                                  fontSize="lg"
+                                  fontWeight="600"
+                                  color={todo.completed ? "gray.500" : "gray.800"}
+                                  textDecoration={todo.completed ? "line-through" : "none"}
+                                  data-testid={`title-${todo.id}`}
+                                >
+                                  {todo.title}
+                                </Text>
+                                {todo.description && (
+                                  <Text
+                                    fontSize="sm"
+                                    color={todo.completed ? "gray.400" : "gray.600"}
+                                    mt={2}
+                                    data-testid={`description-${todo.id}`}
+                                  >
+                                    {todo.description}
+                                  </Text>
+                                )}
+                              </Box>
+                              <HStack spacing={2}>
+                                <IconButton
+                                  icon={<IoCreate />}
+                                  colorScheme="blue"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleStartEdit(todo)}
+                                  data-testid={`edit-${todo.id}`}
+                                  aria-label="Edit todo"
+                                />
+                                <IconButton
+                                  icon={<IoTrash />}
+                                  colorScheme="red"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleDelete(todo.id)}
+                                  data-testid={`delete-${todo.id}`}
+                                  isLoading={isDeleting}
+                                  aria-label="Delete todo"
+                                />
+                              </HStack>
+                            </Flex>
+                          </VStack>
+                        )}
                       </CardBody>
                     </Card>
                   ))}
-                </SimpleGrid>
+                </VStack>
               )}
             </CardBody>
           </Card>

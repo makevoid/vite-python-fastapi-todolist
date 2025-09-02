@@ -1,12 +1,13 @@
 from peewee import *
 
 # Database setup
-db = SqliteDatabase('counter.db')
+db = SqliteDatabase('todo.db')
 
-class Counter(Model):
+class Todo(Model):
     id = AutoField()
-    name = CharField(unique=True)
-    value = IntegerField(default=0)
+    title = CharField()
+    description = TextField(default='')
+    completed = BooleanField(default=False)
 
     class Meta:
         database = db

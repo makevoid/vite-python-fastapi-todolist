@@ -3,16 +3,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from typing import List
 
-from models import db, Counter
-from schemas import CounterResponse, CounterCreate, CounterUpdate, IncrementRequest
-from controllers import CounterController
+from models import db, Todo
+from schemas import TodoResponse, TodoCreate, TodoUpdate
+from controllers import TodoController
 
 # Lifespan context manager for database
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
     db.connect()
-    db.create_tables([Counter])
+    db.create_tables([Todo])
 
     yield
 
@@ -20,7 +20,7 @@ async def lifespan(app: FastAPI):
     db.close()
 
 # Create FastAPI app
-app = FastAPI(title="Counter API", lifespan=lifespan)
+app = FastAPI(title="Todo API", lifespan=lifespan)
 
 # Add CORS middleware
 app.add_middleware(
@@ -32,52 +32,42 @@ app.add_middleware(
 )
 
 # Initialize controller
-counter_controller = CounterController()
+todo_controller = TodoController()
 
 # Routes
 @app.get("/")
 def read_root():
-    return {"message": "Counter API", "version": "1.0.0"}
+    return {"message": "Todo API", "version": "1.0.0"}
 
-@app.get("/api/counters", response_model=List[CounterResponse])
-def get_all_counters():
-    """Get all counters"""
-    return counter_controller.get_all_counters()
+@app.get("/api/todos", response_model=List[TodoResponse])
+def get_all_todos():
+    """Get all todos"""
+    return todo_controller.get_all_todos()
 
-@app.get("/api/counters/{counter_name}", response_model=CounterResponse)
-def get_counter(counter_name: str):
-    """Get a specific counter by name"""
-    return counter_controller.get_counter(counter_name)
+@app.get("/api/todos/{todo_id}", response_model=TodoResponse)
+def get_todo(todo_id: int):
+    """Get a specific todo by ID"""
+    return todo_controller.get_todo(todo_id)
 
-@app.post("/api/counters", response_model=CounterResponse)
-def create_counter(counter: CounterCreate):
-    """Create a new counter"""
-    return counter_controller.create_counter(counter)
+@app.post("/api/todos", response_model=TodoResponse)
+def create_todo(todo: TodoCreate):
+    """Create a new todo"""
+    return todo_controller.create_todo(todo)
 
-@app.post("/api/counters/{counter_name}/increment", response_model=CounterResponse)
-def increment_counter(counter_name: str, request: IncrementRequest = IncrementRequest()):
-    """Increment a counter by a specified amount"""
-    return counter_controller.increment_counter(counter_name, request)
+@app.put("/api/todos/{todo_id}", response_model=TodoResponse)
+def update_todo(todo_id: int, update: TodoUpdate):
+    """Update a todo's details"""
+    return todo_controller.update_todo(todo_id, update)
 
-@app.post("/api/counters/{counter_name}/decrement", response_model=CounterResponse)
-def decrement_counter(counter_name: str, request: IncrementRequest = IncrementRequest()):
-    """Decrement a counter by a specified amount"""
-    return counter_controller.decrement_counter(counter_name, request)
+@app.post("/api/todos/{todo_id}/toggle", response_model=TodoResponse)
+def toggle_todo_completion(todo_id: int):
+    """Toggle a todo's completion status"""
+    return todo_controller.toggle_todo_completion(todo_id)
 
-@app.post("/api/counters/{counter_name}/reset", response_model=CounterResponse)
-def reset_counter(counter_name: str):
-    """Reset a counter to 0"""
-    return counter_controller.reset_counter(counter_name)
-
-@app.put("/api/counters/{counter_name}", response_model=CounterResponse)
-def update_counter(counter_name: str, update: CounterUpdate):
-    """Update a counter's value directly"""
-    return counter_controller.update_counter(counter_name, update)
-
-@app.delete("/api/counters/{counter_name}")
-def delete_counter(counter_name: str):
-    """Delete a counter"""
-    return counter_controller.delete_counter(counter_name)
+@app.delete("/api/todos/{todo_id}")
+def delete_todo(todo_id: int):
+    """Delete a todo"""
+    return todo_controller.delete_todo(todo_id)
 
 if __name__ == "__main__":
     import uvicorn
