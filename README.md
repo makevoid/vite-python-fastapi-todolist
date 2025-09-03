@@ -1,17 +1,17 @@
-# Counter App
+# Todo List App
 
-A professional full-stack counter application built with modern web technologies and object-oriented architecture. This system demonstrates enterprise-level patterns, comprehensive testing, and clean separation of concerns across both frontend and backend.
+A professional full-stack todo list application built with modern web technologies and object-oriented architecture. This system demonstrates enterprise-level patterns, comprehensive testing, and clean separation of concerns across both frontend and backend.
 
 ## 🚀 Features
 
 ### Frontend Capabilities
 - **Modern UI Design**: Professional business-style interface with Chakra UI v2 components
-- **Real-time Updates**: Instant counter modifications with optimistic updates
+- **Real-time Updates**: Instant todo modifications with optimistic updates
 - **Responsive Design**: Mobile-first approach with consistent styling
 - **Error Handling**: Comprehensive error states with user-friendly toast notifications
 - **Loading States**: Visual feedback for all operations with proper loading indicators
 - **Form Validation**: Input validation with clear error messages
-- **Multiple Operations**: Create, increment/decrement (±1, ±10), reset, update, and delete counters
+- **Multiple Operations**: Create, update, toggle completion, and delete todos with inline editing
 
 ### Backend Capabilities
 - **RESTful API**: Full CRUD operations with proper HTTP methods and status codes
@@ -40,15 +40,16 @@ backend/
 ├── schemas.py           # Pydantic models for request/response validation
 ├── services.py          # Business logic layer with service classes
 ├── controllers.py       # HTTP request/response handling layer
+├── repositories.py      # Data access layer with repository pattern
 ├── test_api.py         # Unit and integration tests
 └── requirements.txt     # Python dependencies
 ```
 
 **Object-Oriented Design Patterns:**
 
-- **Service Layer**: `CounterService` handles all business logic operations
-- **Repository Pattern**: `CounterRepository` manages data access and response model conversion
-- **Controller Layer**: `CounterController` handles HTTP concerns and error translation
+- **Service Layer**: `TodoService` handles all business logic operations
+- **Repository Pattern**: `TodoRepository` manages data access and response model conversion
+- **Controller Layer**: `TodoController` handles HTTP concerns and error translation
 - **Custom Exceptions**: Domain-specific exceptions for better error handling
 - **Dependency Injection**: Clean separation of concerns with minimal coupling
 
@@ -61,9 +62,9 @@ frontend/
 │   ├── main.jsx                   # Application entry point with providers
 │   ├── services/
 │   │   ├── ApiService.js          # Base HTTP client class
-│   │   └── CounterService.js      # Counter-specific API operations
+│   │   └── TodoService.js         # Todo-specific API operations
 │   ├── hooks/
-│   │   └── useCounters.js         # Custom hook for counter operations
+│   │   └── useTodos.js            # Custom hook for todo operations
 │   └── index.css                  # Global styles
 ├── package.json             # Dependencies and scripts
 ├── vite.config.js          # Build configuration
@@ -82,8 +83,8 @@ frontend/
 
 ```
 e2e/
-├── test_counter_e2e.py    # Comprehensive user workflow tests
-└── pytest.ini            # Test configuration
+├── test_todo_e2e.py    # Comprehensive user workflow tests
+└── pyproject.toml      # Test configuration
 ```
 
 ## 🧪 Testing Strategy & Philosophy
@@ -98,377 +99,210 @@ Our testing strategy follows the **Testing Pyramid** principle with three distin
 **What We Test**:
 - All CRUD operations (Create, Read, Update, Delete)
 - Error handling and edge cases
-- Data validation and type checking
-- Business rule enforcement
-- Database interactions
+- Data validation and business rules
+- Edge cases (duplicate titles, non-existent todos)
+- Complex workflows combining multiple operations
 
-**Why It Matters**:
-- **Fast Feedback**: Unit tests run in milliseconds, providing immediate feedback
-- **Isolation**: Each test is independent with in-memory database fixtures
-- **Reliability**: Catches bugs early in the development cycle
-- **Documentation**: Tests serve as executable documentation of API behavior
+**Benefits**:
+- ✅ **Fast execution** (typically under 1 second)
+- ✅ **Isolated testing** with database reset between tests
+- ✅ **Comprehensive coverage** of all API endpoints
+- ✅ **Immediate feedback** during development
 
-**Coverage Goals**:
-- ✅ All API endpoints (GET, POST, PUT, DELETE)
-- ✅ Success scenarios with valid data
-- ✅ Error scenarios (404, 400, validation errors)
-- ✅ Edge cases (duplicate names, non-existent counters)
-- ✅ Complex workflows combining multiple operations
-
-#### 2. **Integration Tests** (Implicit in E2E)
-**Purpose**: Verify that frontend and backend work together correctly.
+#### 2. **End-to-End Tests** (Playwright - `test_todo_e2e.py`)
+**Purpose**: Test complete user workflows from browser interaction to database persistence.
 
 **What We Test**:
-- API communication between frontend and backend
-- Data serialization/deserialization
-- Cross-origin requests (CORS)
-- Authentication and authorization flows (when implemented)
+- ✅ **Todo Creation**: Full form submission and validation workflow
+- ✅ **Todo Operations**: All completion toggle, edit, and delete operations
+- ✅ **UI Interactions**: Real browser interactions with visual validation
+- ✅ **Data Persistence**: Verify changes persist across page refreshes
+- ✅ **Console Errors**: Monitor for JavaScript errors during interactions
+- ✅ **Complex Workflows**: Multi-step user scenarios
 
-#### 3. **End-to-End Tests** (Playwright - `test_counter_e2e.py`)
-**Purpose**: Test complete user workflows from a real user's perspective.
+**Benefits**:
+- ✅ **Real browser testing** with actual user interactions
+- ✅ **Full system integration** including database and UI
+- ✅ **Visual regression detection** through screenshot comparison
+- ✅ **Production-like environment** testing
 
-**What We Test**:
-- **User Journeys**: Complete workflows that users actually perform
-- **Browser Compatibility**: Real browser testing with multiple engines
-- **JavaScript Console Monitoring**: Catch runtime errors that unit tests miss
-- **Visual Validation**: Ensure UI elements appear and behave correctly
-- **Cross-Browser Consistency**: Same behavior across different browsers
+### Test Coverage Summary
+- **Backend Unit Tests**: 12 comprehensive test cases
+- **E2E Integration Tests**: 13 user workflow scenarios
+- **Error Monitoring**: Console error detection during all interactions
+- **Database Testing**: Full CRUD operations with proper cleanup
 
-**Key Test Scenarios**:
-- ✅ **Application Loading**: Verify app loads without console errors
-- ✅ **Counter Creation**: Full form submission and validation workflow
-- ✅ **Counter Operations**: All increment/decrement/reset operations
-- ✅ **Data Persistence**: Verify data survives page refreshes
-- ✅ **Error States**: UI properly handles API failures
-- ✅ **Complex Workflows**: Multi-step operations that mirror real usage
+## 🚀 Quick Start
 
-**Console Error Detection**:
-Our E2E tests include specialized console monitoring that catches:
-- JavaScript runtime errors during initial page load
-- Console errors during user interactions
-- Uncaught promise rejections
-- Network errors and failed API calls
+### Prerequisites
+- **Python 3.11+**
+- **Node.js 18+** 
+- **npm/yarn**
 
-### Testing Tools & Technologies
+### 1. Clone & Setup
+```bash
+git clone <repository-url>
+cd vite-python-fastapi-todolist
 
-- **Backend Testing**: `pytest` with FastAPI TestClient
-- **Frontend Testing**: Playwright for cross-browser E2E testing
-- **Database Testing**: In-memory SQLite for fast, isolated tests
-- **Error Monitoring**: Console error detection during E2E tests
-- **Test Data Management**: Automatic cleanup between tests
+# Backend setup
+cd backend
+pip install -r requirements.txt
 
-### Running the Test Suite
+# Frontend setup  
+cd ../frontend
+npm install
+```
 
+### 2. Development Mode
+```bash
+# Terminal 1: Backend (Port 8000)
+cd backend
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+# Terminal 2: Frontend (Port 5173)  
+cd frontend
+npm run dev
+```
+
+### 3. Run Tests
 ```bash
 # Backend unit tests
 cd backend
 pytest test_api.py -v
 
 # End-to-end tests
-cd e2e
-python3 -m pytest test_counter_e2e.py -v
+cd e2e && python3 -m pytest test_todo_e2e.py -v
 
-# Specific test scenarios
-pytest test_counter_e2e.py::TestCounterAppE2E::test_console_errors_on_render -v
+# Quick single E2E test
+python3 -m pytest test_todo_e2e.py::TestTodoAppE2E::test_app_title -v
 ```
 
-## 🛠️ Development Setup
+## 📡 API Reference
 
-### Prerequisites
-- **Python 3.11+** for backend development
-- **Node.js 18+** for frontend development
-- **Git** for version control
-
-### Quick Start
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd vite-python-fastapi-counter
-   ```
-
-2. **Start the backend**
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   uvicorn main:app --reload --host 0.0.0.0 --port 8000
-   ```
-
-3. **Start the frontend** (new terminal)
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
-
-4. **Run tests** (optional)
-   ```bash
-   # Backend tests
-   cd backend && pytest test_api.py -v
-
-   # E2E tests (requires both servers running)
-   cd e2e && python3 -m pytest test_counter_e2e.py -v
-   ```
-
-### Development URLs
-- **Frontend Application**: http://localhost:5173
-- **Backend API**: http://localhost:8000
-- **API Documentation**: http://localhost:8000/docs
-
-## 📚 API Reference
-
-### Base URL
-All API endpoints are prefixed with `/api/counters`
-
-### Endpoints
+All API endpoints are prefixed with `/api/todos`
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/` | Get all counters |
-| `POST` | `/` | Create new counter |
-| `GET` | `/{name}` | Get specific counter |
-| `PUT` | `/{name}` | Update counter value |
-| `DELETE` | `/{name}` | Delete counter |
-| `POST` | `/{name}/increment` | Increment counter |
-| `POST` | `/{name}/decrement` | Decrement counter |
-| `POST` | `/{name}/reset` | Reset counter to 0 |
+| `GET` | `/` | Get all todos |
+| `POST` | `/` | Create new todo |
+| `GET` | `/{id}` | Get specific todo |
+| `PUT` | `/{id}` | Update todo |
+| `POST` | `/{id}/toggle` | Toggle todo completion |
+| `DELETE` | `/{id}` | Delete todo |
 
 ### Example Requests
 
-**Create Counter**
-```json
-POST /api/counters
+**Create Todo**
+```bash
+POST /api/todos
+Content-Type: application/json
+
 {
-  "name": "page-views",
-  "initial_value": 0
+  "title": "Learn FastAPI",
+  "description": "Build a todo app with Python and React"
 }
 ```
 
-**Increment Counter**
-```json
-POST /api/counters/page-views/increment
-{
-  "amount": 5
-}
+**Toggle Todo Completion**
+```bash
+POST /api/todos/1/toggle
 ```
 
 ## 🔧 Development Workflow
 
-### Adding New Features
+### Day-to-Day Development
+1. **Start Services**: Backend (port 8000) + Frontend (port 5173)
+2. **Interactive API Docs**: Visit http://localhost:8000/docs for Swagger UI
+3. **Hot Reload**: Both services support hot reload for rapid development
+4. **Testing**: Run unit tests first, then E2E tests for integration validation
 
-1. **Backend Changes**:
-   - Add Pydantic models to `schemas.py`
-   - Implement business logic in `services.py`
-   - Add controller methods in `controllers.py`
-   - Update routes in `main.py`
-   - Write unit tests in `test_api.py`
+### Key Development URLs
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
+- **Alternative API docs**: http://localhost:8000/redoc
 
-2. **Frontend Changes**:
-   - Add service methods to appropriate service class
-   - Update custom hooks for React Query integration
-   - Modify UI components as needed
-   - Update E2E tests for new functionality
-
-3. **Testing**:
-   - Run backend unit tests: `pytest test_api.py -v`
-   - Run E2E tests: `python3 -m pytest test_counter_e2e.py -v`
-   - Verify console error monitoring passes
-
-### Deployment
-
-**Docker Deployment** (when implemented):
-```bash
-docker-compose up --build
+### Project Structure Overview
 ```
-
-**Manual Deployment**:
-1. Build frontend: `npm run build`
-2. Deploy backend with production WSGI server
-3. Configure reverse proxy for frontend assets
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Make changes following the existing patterns
-4. Add tests for new functionality
-5. Ensure all tests pass
-6. Submit a pull request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
-
-**Built with ❤️ using modern web technologies and clean architecture principles.**
-
-- **Backend (FastAPI + Python)**:
-  - RESTful API with full CRUD operations
-  - SQLite database with Peewee ORM
-  - Comprehensive API documentation (OpenAPI/Swagger)
-  - Complete test coverage with pytest
-
-- **Frontend (React + Vite)**:
-  - Modern React application with hooks
-  - Beautiful, responsive design
-  - Real-time counter operations
-  - Error handling and loading states
-
-- **Testing**:
-  - Unit tests for backend API
-  - End-to-end tests with Playwright
-  - Multiple browser testing (Chrome, Firefox, Safari)
-
-## Project Structure
-
-```
-vite-python-fastapi-counter/
-├── backend/
-│   ├── main.py              # FastAPI application
-│   ├── test_api.py          # Backend tests
-│   ├── requirements.txt     # Python dependencies
-│   ├── pytest.ini          # Pytest configuration
-│   └── Dockerfile           # Docker configuration
-├── frontend/
+vite-python-fastapi-todolist/
+├── backend/          # FastAPI backend
+│   ├── main.py       # App setup & routes
+│   ├── models.py     # Database models
+│   ├── services.py   # Business logic
+│   └── test_api.py   # Unit tests
+├── frontend/         # React frontend  
 │   ├── src/
-│   │   ├── App.jsx          # Main React component
-│   │   ├── App.css          # Styles
-│   │   ├── main.jsx         # React entry point
-│   │   └── index.css        # Global styles
-│   ├── tests/
-│   │   └── counter.spec.js  # E2E tests
-│   ├── package.json         # Node dependencies
-│   ├── vite.config.js       # Vite configuration
-│   ├── playwright.config.js # Playwright configuration
-│   └── Dockerfile           # Docker configuration
-└── docker-compose.yml       # Docker Compose setup
+│   │   ├── App.jsx   # Main component
+│   │   └── services/ # API services
+│   └── package.json
+├── e2e/             # End-to-end tests
+│   └── test_todo_e2e.py
+└── README.md
 ```
 
-## Quick Start
+## 🎯 Key Features
 
-### Prerequisites
+### Frontend Features
+- Professional Chakra UI design with business styling
+- Inline editing for todos with save/cancel functionality
+- Real-time completion status with visual feedback
+- Toast notifications for all operations
+- Responsive design for desktop and mobile
+- Loading states and error handling
 
-- Python 3.11+
-- Node.js 18+
-- Docker (optional)
+### Backend Features  
+- FastAPI with auto-generated OpenAPI documentation
+- SQLite database with Peewee ORM
+- Full CRUD operations with proper HTTP status codes
+- Input validation with Pydantic models
+- Structured error responses
+- CORS support for frontend integration
 
-### Option 1: Manual Setup
+### API Endpoints
+- `GET /api/todos` - Get all todos
+- `GET /api/todos/{id}` - Get specific todo
+- `POST /api/todos` - Create new todo
+- `PUT /api/todos/{id}` - Update todo
+- `POST /api/todos/{id}/toggle` - Toggle completion status
+- `DELETE /api/todos/{id}` - Delete todo
 
-#### Backend Setup
+### User Experience
+- Create todos with title and optional description
+- Toggle completion status with checkboxes
+- Edit todos inline with dedicated edit mode
+- Delete todos with confirmation
+- Visual distinction between completed and pending todos
+- Progress badges showing completed vs pending todo counts
 
-```bash
-cd backend
-pip install -r requirements.txt
-python main.py
-```
+## 🔬 Technical Implementation
 
-The API will be available at `http://localhost:8000`
-API documentation: `http://localhost:8000/docs`
+This todo application demonstrates several advanced development patterns:
 
-#### Frontend Setup
+### Backend Architecture
+- **Layered Architecture**: Separation of controllers, services, repositories, and models
+- **Repository Pattern**: Data access abstraction with service integration
+- **Exception Handling**: Custom exceptions with proper HTTP status mapping
+- **ORM Integration**: Peewee ORM with SQLite for simple yet powerful data persistence
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-The frontend will be available at `http://localhost:5173`
-
-### Option 2: Docker Setup
-
-```bash
-docker-compose up --build
-```
-
-## API Endpoints
-
-- `GET /` - API info
-- `GET /api/counters` - Get all counters
-- `GET /api/counters/{name}` - Get specific counter
-- `POST /api/counters` - Create new counter
-- `POST /api/counters/{name}/increment` - Increment counter
-- `POST /api/counters/{name}/decrement` - Decrement counter
-- `POST /api/counters/{name}/reset` - Reset counter to 0
-- `PUT /api/counters/{name}` - Update counter value
-- `DELETE /api/counters/{name}` - Delete counter
-
-## Testing
-
-### Backend Tests
-
-```bash
-cd backend
-pytest test_api.py -v
-```
-
-### End-to-End Tests
-
-```bash
-cd frontend
-npm run test:e2e
-```
-
-### Interactive Testing
-
-```bash
-cd frontend
-npm run test:e2e:ui
-```
-
-## Development
-
-### Backend Development
-
-The FastAPI backend uses:
-- **FastAPI** for the web framework
-- **Peewee** as the ORM
-- **SQLite** for the database
-- **Pydantic** for data validation
-- **pytest** for testing
-
-### Frontend Development
-
-The React frontend uses:
-- **React 18** with hooks
-- **Vite** for build tooling
-- **Modern CSS** with responsive design
-- **Playwright** for E2E testing
+### Frontend Architecture  
+- **Service Layer**: HTTP client abstraction with TodoService extending ApiService
+- **Custom Hooks**: useTodos hook integrating TanStack React Query with services
+- **State Management**: Server state management with optimistic updates
+- **Component Design**: Professional UI components with consistent styling
 
 ### Testing Strategy
+- **Unit Testing**: Backend API testing with pytest and test database isolation
+- **E2E Testing**: Full user workflow testing with Playwright
+- **Error Monitoring**: Console error detection during browser interactions
+- **Test Isolation**: Proper cleanup and setup for reliable test execution
 
-1. **Backend Testing**: Comprehensive unit tests covering all API endpoints, error cases, and database operations
-2. **E2E Testing**: Full user workflow testing including UI interactions, API calls, and data persistence
+## 📝 Contributing
 
-## Features Implemented
+1. **Development Setup**: Follow the Quick Start guide
+2. **Testing**: Ensure all tests pass before submitting changes
+   - Run backend tests: `pytest test_api.py -v`
+   - Run E2E tests: `python3 -m pytest test_todo_e2e.py -v`
+3. **Code Style**: Follow existing patterns and maintain consistent formatting
+4. **Documentation**: Update README if adding new features or changing APIs
 
-- Create counters with custom names and initial values
-- Increment/decrement by 1 or 10
-- Reset counters to 0
-- Set counter values directly
-- Delete counters
-- Error handling for duplicate names
-- Data persistence across page reloads
-- Responsive design for mobile/desktop
-- Loading states and error messages
-
-## Architecture
-
-- **Clean separation** between frontend and backend
-- **RESTful API design** following best practices
-- **Modern React patterns** with functional components and hooks
-- **Comprehensive error handling** throughout the stack
-- **Scalable testing** approach with unit and E2E tests
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new functionality
-4. Ensure all tests pass
-5. Submit a pull request
-
-## License
-
-MIT License
+This todo application serves as a comprehensive example of modern full-stack development with professional patterns, thorough testing, and clean architecture.

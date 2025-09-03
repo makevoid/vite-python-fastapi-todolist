@@ -40,7 +40,7 @@ def main():
     backend_dir = project_root / "backend"
     e2e_dir = project_root / "e2e"
     
-    print("🧪 Counter App - Comprehensive Test Suite")
+    print("🧪 Todo List App - Comprehensive Test Suite")
     print("="*60)
     print("This will run all tests in isolated environments:")
     print("• Backend unit tests (in-memory database)")
@@ -66,11 +66,11 @@ def main():
     print("Uses separate test database in temp directory")
     
     e2e_success = run_command(
-        ["python3", "-m", "pytest", "test_counter_e2e.py::TestCounterAppE2E::test_app_title", 
-         "test_counter_e2e.py::TestCounterAppE2E::test_create_counter",
-         "test_counter_e2e.py::TestCounterAppE2E::test_duplicate_counter_error",
-         "test_counter_e2e.py::TestCounterAppE2E::test_delete_counter",
-         "test_counter_e2e.py::TestCounterAppE2E::test_complex_workflow",
+        ["python3", "-m", "pytest", "test_todo_e2e.py::TestTodoAppE2E::test_app_title", 
+         "test_todo_e2e.py::TestTodoAppE2E::test_create_todo",
+         "test_todo_e2e.py::TestTodoAppE2E::test_toggle_todo_completion",
+         "test_todo_e2e.py::TestTodoAppE2E::test_delete_todo",
+         "test_todo_e2e.py::TestTodoAppE2E::test_complex_workflow",
          "-v", "--tb=short"],
         cwd=e2e_dir,
         description="End-to-End Tests (Core Workflows)"

@@ -241,7 +241,7 @@ Both test suites are designed for CI environments:
 ### Todo UI Features
 - **Visual States**: Completed todos are visually distinct (strikethrough, muted colors)
 - **Inline Editing**: Click edit button to modify todos in place
-- **Completion Tracking**: Badge counters show pending vs completed todos
+- **Completion Tracking**: Badge displays show pending vs completed todos
 - **Responsive Design**: Works on desktop and mobile devices
 - **Toast Notifications**: User feedback for all operations
 
