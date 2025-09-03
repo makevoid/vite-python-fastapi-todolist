@@ -53,7 +53,10 @@
       "Read(/Users/makevoid/apps/**)",
       "Bash(pip3 install:*)",
       "Bash(source:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(playwright install)",
+      "Bash(PYTHONPATH=/Users/makevoid/apps/vite-python-fastapi-todolist/backend/.venv/lib/python3.12/site-packages /Users/makevoid/apps/vite-python-fastapi-todolist/backend/.venv/bin/python -m pytest e2e/test_todo_e2e.py -v)",
+      "Bash(PYTHONPATH=/Users/makevoid/apps/vite-python-fastapi-todolist/backend/.venv/lib/python3.12/site-packages /Users/makevoid/apps/vite-python-fastapi-todolist/backend/.venv/bin/python -m pytest test_todo_e2e.py::TestTodoAppE2E::test_app_title -v)"
     ],
     "deny": [],
     "ask": []

@@ -12,6 +12,20 @@
 
 ---
 
+### 🤖 **Quick Start with AI Coding Assistants**
+
+**Ready to build your custom app?** This todo app serves as a foundation that can be transformed into any application you want to build.
+
+1. **Open your AI coding environment** (Claude Code, Cursor, GitHub Copilot, or any AI assistant)
+2. **Run the setup command:** Ask your AI assistant to run: `install and run the project`
+3. **Wait for setup completion:** The AI will install all packages and run tests automatically
+4. **Environment ready:** Once tests pass, your AI coding environment is ready
+5. **Transform the app:** Give your AI assistant a prompt like: "Transform this todo app into a [task management system / expense tracker / inventory manager / etc.]"
+
+The AI will handle all setup, testing, and troubleshooting automatically!
+
+---
+
 ### 🧪 **Test Suite Excellence**
 - **🔬 12 Backend Unit Tests** - Lightning fast API testing
 - **🌐 13 End-to-End Tests** - Complete user workflow validation  
