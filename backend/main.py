@@ -1,15 +1,13 @@
-import os
-import tempfile
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from typing import List
-from peewee import SqliteDatabase
 
 from database import db
 from models import Todo
 from schemas import TodoResponse, TodoCreate, TodoUpdate
 from controllers import TodoController
+from config.environment import APP_TITLE, CORS_ORIGINS, SERVER_HOST, SERVER_PORT, RELOAD
 
 # Get database from models
 def get_database():
@@ -32,23 +30,14 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI app with environment-specific title
 def create_app():
-    app_env = os.getenv("APP_ENV", "development")
-    title = "Todo API - Test" if app_env == "test" else "Todo API"
-    return FastAPI(title=title, lifespan=lifespan)
+    return FastAPI(title=APP_TITLE, lifespan=lifespan)
 
 app = create_app()
 
 # Add CORS middleware with environment-specific origins
-def get_cors_origins():
-    app_env = os.getenv("APP_ENV", "development")
-    if app_env == "test":
-        return ["http://localhost:5174"]  # Different port for test frontend
-    else:
-        return ["http://localhost:5173", "http://localhost:3000"]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=get_cors_origins(),
+    allow_origins=CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -94,7 +83,4 @@ def delete_todo(todo_id: int):
 
 if __name__ == "__main__":
     import uvicorn
-    app_env = os.getenv("APP_ENV", "development")
-    port = 8001 if app_env == "test" else 8000
-    reload = app_env != "test"  # Don't use reload in test mode
-    uvicorn.run(app, host="0.0.0.0", port=port, reload=reload)
+    uvicorn.run(app, host=SERVER_HOST, port=SERVER_PORT, reload=RELOAD)
