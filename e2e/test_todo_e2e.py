@@ -21,12 +21,16 @@ class TestTodoAppE2E:
         frontend_process = None
         
         try:
-            # Start test backend on port 8001
+            # Start test backend on port 8001 using main.py with APP_ENV=test
+            env = os.environ.copy()
+            env["APP_ENV"] = "test"
+            
             backend_process = subprocess.Popen(
-                ["python3", "test_main.py"],
+                ["python3", "main.py"],
                 cwd="../backend",
                 stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE
+                stderr=subprocess.PIPE,
+                env=env
             )
             
             # Wait for backend to start
@@ -41,16 +45,16 @@ class TestTodoAppE2E:
                 raise Exception("Backend failed to start")
             
             # Start test frontend on port 5174
-            env = os.environ.copy()
-            env["VITE_API_URL"] = API_URL
-            env["PORT"] = "5174"
+            frontend_env = os.environ.copy()
+            frontend_env["VITE_API_URL"] = API_URL
+            frontend_env["PORT"] = "5174"
             
             frontend_process = subprocess.Popen(
                 ["npm", "run", "dev", "--", "--port", "5174"],
                 cwd="../frontend",
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                env=env
+                env=frontend_env
             )
             
             # Wait for frontend to start

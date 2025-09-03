@@ -47,7 +47,9 @@
       "Bash(lsof:*)",
       "Bash(kill:*)",
       "Bash(timeout:*)",
-      "Bash(time timeout:*)"
+      "Bash(time timeout:*)",
+      "Bash(APP_ENV=test python3 -c \"import os; print(''APP_ENV:'', os.getenv(''APP_ENV'')); from main import app; print(''App title:'', app.title)\")",
+      "Bash(APP_ENV=test timeout 10 python3 main.py)"
     ],
     "deny": [],
     "ask": []
