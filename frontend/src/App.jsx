@@ -22,7 +22,7 @@ import {
   Textarea,
   Checkbox,
 } from "@chakra-ui/react";
-import { IoAdd, IoTrash, IoCheckmark, IoClose, IoCreate } from "react-icons/io5";
+import { IoAdd, IoTrash, IoCheckmark, IoClose, IoCreate, IoLogoGithub } from "react-icons/io5";
 import useTodos from "./hooks/useTodos.js";
 
 function App() {
@@ -89,7 +89,7 @@ function App() {
       updates: {
         title: editTitle,
         description: editDescription,
-      }
+      },
     });
 
     setEditingTodo(null);
@@ -103,8 +103,8 @@ function App() {
     setEditDescription("");
   };
 
-  const completedTodos = todos.filter(todo => todo.completed);
-  const pendingTodos = todos.filter(todo => !todo.completed);
+  const completedTodos = todos.filter((todo) => todo.completed);
+  const pendingTodos = todos.filter((todo) => !todo.completed);
 
   if (error) {
     return (
@@ -231,7 +231,14 @@ function App() {
                   </Heading>
                 </Flex>
                 <HStack spacing={3}>
-                  <Badge colorScheme="orange" variant="solid" borderRadius="md" px={3} py={1} fontWeight="600">
+                  <Badge
+                    colorScheme="orange"
+                    variant="solid"
+                    borderRadius="md"
+                    px={3}
+                    py={1}
+                    fontWeight="600"
+                  >
                     {pendingTodos.length} Pending
                   </Badge>
                   <Badge colorScheme="green" variant="solid" borderRadius="md" px={3} py={1} fontWeight="600">
@@ -361,7 +368,7 @@ function App() {
                                 isDisabled={isToggling}
                                 borderColor="gray.400"
                                 _hover={{
-                                  borderColor: "green.400"
+                                  borderColor: "green.400",
                                 }}
                                 _checked={{
                                   bg: "green.500",
@@ -369,8 +376,8 @@ function App() {
                                   color: "white",
                                   _hover: {
                                     bg: "green.600",
-                                    borderColor: "green.600"
-                                  }
+                                    borderColor: "green.600",
+                                  },
                                 }}
                               />
                               <Box flex={1}>
@@ -427,6 +434,28 @@ function App() {
           </Card>
         </VStack>
       </Container>
+
+      {/* Footer */}
+      <Box bg={headerBg} borderTop="1px" borderColor={borderColor} py={6} mt={8}>
+        <Container maxW="7xl">
+          <Flex justify="center" align="center" gap={3}>
+            <IoLogoGithub size={24} color="gray.600" />
+            <Text fontSize="sm" color="gray.600">
+              View source code on{" "}
+              <Text
+                as="a"
+                href="https://github.com/makevoid/vite-python-fastapi-todolist"
+                rel="noopener noreferrer"
+                color={primaryColor}
+                fontWeight="600"
+                _hover={{ textDecoration: "underline" }}
+              >
+                GitHub
+              </Text>
+            </Text>
+          </Flex>
+        </Container>
+      </Box>
     </Box>
   );
 }
