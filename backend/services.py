@@ -1,38 +1,36 @@
 from typing import List
-from models import Todo
-from schemas import TodoUpdate
-
-class TodoNotFoundException(Exception):
-    """Raised when a todo is not found"""
-    pass
-
+from schemas import TodoResponse, TodoCreate, TodoUpdate
+from repositories import TodoRepository
 
 class TodoService:
-    """Service class for todo business logic"""
+    """Service class for todo business logic - uses repository for data access"""
 
-    @staticmethod
-    def get_all_todos() -> List[Todo]:
-        """Get all todos from the database"""
-        return list(Todo.select())
+    def __init__(self):
+        self.repository = TodoRepository()
 
-    @staticmethod
-    def get_todo_by_id(todo_id: int) -> Todo:
-        """Get a specific todo by ID"""
-        try:
-            return Todo.get(Todo.id == todo_id)
-        except Todo.DoesNotExist:
-            raise TodoNotFoundException(f"Todo with id '{todo_id}' not found")
+    def get_all_todos(self) -> List[TodoResponse]:
+        """Get all todos and convert to response models"""
+        todos = self.repository.find_all()
+        return [TodoResponse.model_validate(todo, from_attributes=True) for todo in todos]
 
-    @staticmethod
-    def create_todo(title: str, description: str = '') -> Todo:
-        """Create a new todo"""
-        return Todo.create(title=title, description=description)
+    def get_todo_by_id(self, todo_id: int) -> TodoResponse:
+        """Get a specific todo by ID and convert to response model"""
+        todo = self.repository.find_by_id(todo_id)
+        return TodoResponse.model_validate(todo, from_attributes=True)
 
-    @staticmethod
-    def update_todo(todo_id: int, update_data: TodoUpdate) -> Todo:
-        """Update a todo's details"""
-        todo = TodoService.get_todo_by_id(todo_id)
+    def create_todo(self, todo_data: TodoCreate) -> TodoResponse:
+        """Create a new todo from request data"""
+        todo = self.repository.create(
+            title=todo_data.title,
+            description=todo_data.description
+        )
+        return TodoResponse.model_validate(todo, from_attributes=True)
+
+    def update_todo(self, todo_id: int, update_data: TodoUpdate) -> TodoResponse:
+        """Update a todo's details with business logic"""
+        todo = self.repository.find_by_id(todo_id)
         
+        # Business logic: only update provided fields
         if update_data.title is not None:
             todo.title = update_data.title
         if update_data.description is not None:
@@ -40,20 +38,17 @@ class TodoService:
         if update_data.completed is not None:
             todo.completed = update_data.completed
         
-        todo.save()
-        return todo
+        updated_todo = self.repository.save(todo)
+        return TodoResponse.model_validate(updated_todo, from_attributes=True)
 
-    @staticmethod
-    def toggle_todo_completion(todo_id: int) -> Todo:
-        """Toggle a todo's completion status"""
-        todo = TodoService.get_todo_by_id(todo_id)
+    def toggle_todo_completion(self, todo_id: int) -> TodoResponse:
+        """Toggle a todo's completion status (business logic)"""
+        todo = self.repository.find_by_id(todo_id)
         todo.completed = not todo.completed
-        todo.save()
-        return todo
+        updated_todo = self.repository.save(todo)
+        return TodoResponse.model_validate(updated_todo, from_attributes=True)
 
-    @staticmethod
-    def delete_todo(todo_id: int) -> bool:
-        """Delete a todo"""
-        todo = TodoService.get_todo_by_id(todo_id)
-        todo.delete_instance()
-        return True
+    def delete_todo(self, todo_id: int) -> dict:
+        """Delete a todo and return success message"""
+        self.repository.delete_by_id(todo_id)
+        return {"message": f"Todo with id '{todo_id}' deleted"}
