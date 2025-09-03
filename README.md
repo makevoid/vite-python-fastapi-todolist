@@ -16,13 +16,24 @@
 
 **Ready to build your custom app?** This todo app serves as a foundation that can be transformed into any application you want to build.
 
+#### Option 1: Use This Repository
 1. **Open your AI coding environment** (Claude Code, Cursor, GitHub Copilot, or any AI assistant)
 2. **Run the setup command:** Ask your AI assistant to run: `install and run the project`
 3. **Wait for setup completion:** The AI will install all packages and run tests automatically
 4. **Environment ready:** Once tests pass, your AI coding environment is ready
 5. **Transform the app:** Give your AI assistant a prompt like: "Transform this todo app into a [task management system / expense tracker / inventory manager / etc.]"
 
-The AI will handle all setup, testing, and troubleshooting automatically!
+#### Option 2: Use Just the Prompt (No Repository Needed)
+**Don't want to clone this repo?** Use our standalone prompt instead:
+
+1. **Copy the [docs/PROMPT.md](./docs/PROMPT.md) file** - Contains complete specifications for recreating this app
+2. **Paste into any AI assistant** - Works with Claude, ChatGPT, Cursor, GitHub Copilot, etc.
+3. **AI builds everything from scratch** - Creates the entire full-stack app based on the prompt
+4. **Customize during creation** - Tell the AI to modify it for your specific use case while building
+
+**What is PROMPT.md?** It's a comprehensive specification document that describes exactly how to build this entire application. Any AI assistant can use it to recreate the full codebase, tests, and documentation from scratch - no repository needed!
+
+The AI will handle all setup, testing, and troubleshooting automatically with either approach!
 
 ---
 
