@@ -3,8 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from typing import List
 
-from database import db
-from models import Todo
+from models import db, Todo
 from schemas import TodoResponse, TodoCreate, TodoUpdate
 from controllers import TodoController
 from config.environment import APP_TITLE, CORS_ORIGINS, SERVER_HOST, SERVER_PORT, RELOAD
