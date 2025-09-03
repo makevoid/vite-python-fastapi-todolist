@@ -1,7 +1,5 @@
 from peewee import *
-
-# Database setup
-db = SqliteDatabase('todo.db')
+from database import db
 
 class Todo(Model):
     id = AutoField()

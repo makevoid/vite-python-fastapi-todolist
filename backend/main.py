@@ -6,22 +6,14 @@ from contextlib import asynccontextmanager
 from typing import List
 from peewee import SqliteDatabase
 
-from models import db, Todo
+from database import db
+from models import Todo
 from schemas import TodoResponse, TodoCreate, TodoUpdate
 from controllers import TodoController
 
-# Configure database based on environment
+# Get database from models
 def get_database():
-    app_env = os.getenv("APP_ENV", "development")
-    if app_env == "test":
-        # Use temporary database for tests
-        test_db_file = os.path.join(tempfile.gettempdir(), "test_todo.db")
-        test_db = SqliteDatabase(test_db_file)
-        Todo._meta.database = test_db
-        return test_db
-    else:
-        # Use default database
-        return db
+    return db
 
 # Lifespan context manager for database
 @asynccontextmanager

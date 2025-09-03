@@ -1,5 +1,6 @@
 __pycache__
 *.db
+*.sqlite
 node_modules
 test-results
 playwright-report
