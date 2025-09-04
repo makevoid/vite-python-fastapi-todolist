@@ -4,11 +4,6 @@ import tempfile
 # Environment constants
 APP_ENV = os.getenv("APP_ENV", "development")
 
-# Environment types
-DEVELOPMENT = "development"
-TEST = "test"
-PRODUCTION = "production"
-
 # Database paths
 DEVELOPMENT_DB_PATH = "todos_development.sqlite"
 TEST_DB_PATH = os.path.join(tempfile.gettempdir(), "todos_test.sqlite")
@@ -28,14 +23,14 @@ TEST_ORIGINS = ["http://localhost:5174"]
 PRODUCTION_ORIGINS = []  # Should be configured for production
 
 # Environment-based configuration
-if APP_ENV == TEST:
+if APP_ENV == "test":
     DATABASE_PATH = TEST_DB_PATH
     SERVER_HOST = TEST_HOST
     SERVER_PORT = TEST_PORT
     CORS_ORIGINS = TEST_ORIGINS
     APP_TITLE = "Todo API - Test"
     RELOAD = False
-elif APP_ENV == PRODUCTION:
+elif APP_ENV == "production":
     DATABASE_PATH = PRODUCTION_DB_PATH
     SERVER_HOST = PRODUCTION_HOST
     SERVER_PORT = PRODUCTION_PORT
