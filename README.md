@@ -13,6 +13,13 @@ Iterate from a todo list to any app. Use this repo as a base.
 
 </div>
 
+### Quick Start
+
+- 1 - Clone the repo
+- 2 - Run claude code or your favourite coding CLI
+- 3 - Run this prompt: `this is a todolist app - you need to change this todolist app to be a .... `
+- 4 - profit!
+
 ---
 
 ### 🤖 **Quick Start with AI Coding Assistants**
