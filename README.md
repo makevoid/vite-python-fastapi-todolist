@@ -13,7 +13,7 @@ Iterate from a todo list to any app. Use this repo as a base.
 
 </div>
 
-### Quick Start
+### Quick Start TLDR
 
 - 1 - Clone the repo
 - 2 - Run claude code or your favourite coding CLI
@@ -22,7 +22,7 @@ Iterate from a todo list to any app. Use this repo as a base.
 
 ---
 
-### 🤖 **Quick Start with AI Coding Assistants**
+### 🤖 **Quick Start - Long version***
 
 **Ready to build your custom app?** This todo app serves as a foundation that can be transformed into any application you want to build.
 
