@@ -22,7 +22,7 @@ Iterate from a todo list to any app. Use this repo as a base.
 
 ---
 
-### 🤖 **Quick Start - Long version***
+### 🤖 **Quick Start - Long version**
 
 **Ready to build your custom app?** This todo app serves as a foundation that can be transformed into any application you want to build.
 
