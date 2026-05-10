@@ -8,30 +8,57 @@ This is a full-stack todo list application with a React frontend, FastAPI backen
 
 ## Development Commands
 
+### First-Time Setup
+```bash
+# Backend — use uv (not pip)
+cd backend
+uv venv
+uv pip install -r requirements.txt
+
+# Frontend
+cd frontend
+npm install
+
+# E2E — install playwright browser
+cd e2e
+uv run --with pytest --with pytest-playwright --with playwright --with requests \
+  python -m playwright install chromium
+```
+
+### Starting Services (background processes)
+Run from the `backend/` directory:
+```bash
+# Backend (port 8000) — logs to ./tmp/backend.log
+uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000 > ../tmp/backend.log 2>&1 &
+
+# Frontend (port 5173 or next available) — logs to ./tmp/frontend.log
+cd ../frontend && npm run dev > ../tmp/frontend.log 2>&1 &
+```
+
 ### Backend Development
 ```bash
 cd backend
-pip install -r requirements.txt
-uvicorn main:app --reload --host 0.0.0.0 --port 8000  # Development server
-python main.py                                        # Alternative startup
-pytest test_api.py -v                                # Run all backend tests
-pytest test_api.py::TestTodoAPI::test_create_todo -v # Single test
+uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000  # Development server
+uv run pytest test_api.py -v                                  # Run all backend tests
+uv run pytest test_api.py::TestTodoAPI::test_create_todo -v   # Single test
 ```
 
 ### Frontend Development
 ```bash
 cd frontend
-npm install
-npm run dev        # Development server (port 5173)
+npm run dev        # Development server (port 5173; bumps to 5174 if taken)
 npm run build      # Production build
 npm run preview    # Preview production build
 ```
 
 ### End-to-End Testing
+E2E tests spin up their own isolated backend (port 8001) and frontend (port 5175). Do not use ports 8001 or 5175 for anything else while running E2E tests.
 ```bash
 cd e2e
-python3 -m pytest test_todo_e2e.py -v                    # All E2E tests
-python3 -m pytest test_todo_e2e.py::TestTodoAppE2E::test_app_title -v  # Single E2E test
+uv run --with pytest --with pytest-playwright --with playwright --with requests \
+  python -m pytest test_todo_e2e.py -v                    # All E2E tests
+uv run --with pytest --with pytest-playwright --with playwright --with requests \
+  python -m pytest test_todo_e2e.py::TestTodoAppE2E::test_app_title -v  # Single test
 ```
 
 ### Docker Development
