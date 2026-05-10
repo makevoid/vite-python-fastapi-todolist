@@ -196,4 +196,12 @@ POST /api/todos/1/toggle
 
 ---
 
+NOTE:
+
+Integration tests passing in 0.12s
+
+Iterate on integration tests but also have at the end of your session / context limit a e2e test run to pass.
+
+---
+
 Iterate from a todo list to any app. Use this repo as a base.
