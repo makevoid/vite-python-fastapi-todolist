@@ -5,3 +5,6 @@ node_modules
 test-results
 playwright-report
 .venv
+backend/uv.lock
+e2e/uv.lock
+tmp/

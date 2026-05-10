@@ -23,7 +23,9 @@
       "Bash(pip3 install:*)",
       "Bash(source:*)",
       "Bash(playwright install)",
-      "Bash(inv:*)"
+      "Bash(inv:*)",
+      "Bash(uv pip *)",
+      "Bash(uv run *)"
     ],
     "deny": [],
     "ask": []

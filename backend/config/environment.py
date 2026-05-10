@@ -18,8 +18,8 @@ PRODUCTION_HOST = "0.0.0.0"
 PRODUCTION_PORT = 8000
 
 # CORS origins
-DEVELOPMENT_ORIGINS = ["http://localhost:5173", "http://localhost:3000"]
-TEST_ORIGINS = ["http://localhost:5174"]
+DEVELOPMENT_ORIGINS = ["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"]
+TEST_ORIGINS = ["http://localhost:5175"]
 PRODUCTION_ORIGINS = []  # Should be configured for production
 
 # Environment-based configuration

@@ -9,7 +9,7 @@ from playwright.sync_api import Page, expect, Browser, BrowserContext, Playwrigh
 
 # Test environment uses different ports
 API_URL = "http://localhost:8001"
-APP_URL = "http://localhost:5174"
+APP_URL = "http://localhost:5175"
 
 class TestTodoAppE2E:
     """End-to-end tests for Todo App"""
@@ -26,7 +26,7 @@ class TestTodoAppE2E:
             env["APP_ENV"] = "test"
             
             backend_process = subprocess.Popen(
-                ["python3", "main.py"],
+                ["../backend/.venv/bin/python", "main.py"],
                 cwd="../backend",
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -47,10 +47,10 @@ class TestTodoAppE2E:
             # Start test frontend on port 5174
             frontend_env = os.environ.copy()
             frontend_env["VITE_API_URL"] = API_URL
-            frontend_env["PORT"] = "5174"
+            frontend_env["PORT"] = "5175"
             
             frontend_process = subprocess.Popen(
-                ["npm", "run", "dev", "--", "--port", "5174"],
+                ["npm", "run", "dev", "--", "--port", "5175"],
                 cwd="../frontend",
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
