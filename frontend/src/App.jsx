@@ -252,34 +252,38 @@ function App() {
                 ) : (
                   /* View mode */
                   <>
-                    <input
-                      type="checkbox"
-                      className="todo-checkbox"
-                      checked={todo.completed}
-                      onChange={() => toggleTodoCompletion(todo.id)}
-                      data-testid={`toggle-${todo.id}`}
-                      disabled={isToggling}
-                    />
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p
-                        data-testid={`title-${todo.id}`}
-                        style={{
-                          margin: 0,
-                          fontSize: 15,
-                          fontWeight: 500,
-                          color: todo.completed ? "#94a3b8" : "#0f172a",
-                          textDecoration: todo.completed ? "line-through" : "none",
-                          transition: "color 0.2s",
-                          lineHeight: 1.4,
-                        }}
-                      >
-                        {todo.title}
-                      </p>
+                      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                        <input
+                          type="checkbox"
+                          className="todo-checkbox"
+                          checked={todo.completed}
+                          onChange={() => toggleTodoCompletion(todo.id)}
+                          data-testid={`toggle-${todo.id}`}
+                          disabled={isToggling}
+                          style={{ flexShrink: 0 }}
+                        />
+                        <p
+                          data-testid={`title-${todo.id}`}
+                          style={{
+                            margin: 0,
+                            fontSize: 15,
+                            fontWeight: 500,
+                            color: todo.completed ? "#94a3b8" : "#0f172a",
+                            textDecoration: todo.completed ? "line-through" : "none",
+                            transition: "color 0.2s",
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          {todo.title}
+                        </p>
+                      </div>
                       {todo.description && (
                         <p
                           data-testid={`description-${todo.id}`}
                           style={{
                             margin: "4px 0 0",
+                            paddingLeft: 34,
                             fontSize: 13,
                             color: todo.completed ? "#cbd5e1" : "#64748b",
                             lineHeight: 1.5,
